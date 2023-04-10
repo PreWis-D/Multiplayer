@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Bottle : CollectableObject
+public class Bottle : InteractableObject
 {
     
 }

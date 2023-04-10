@@ -1,9 +1,6 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
 using UnityEngine.Events;
-using System.Security.Cryptography;
 
 public class InteractableObjectsHandler : MonoBehaviourPunCallbacks
 {
@@ -13,15 +10,12 @@ public class InteractableObjectsHandler : MonoBehaviourPunCallbacks
     [SerializeField] private LayerMask _animColliderMask;
     [SerializeField] private float _takeDistance;
     [SerializeField] private PlayerInput _playerInput;
-    [SerializeField] private Inventory _inventory;
 
     private RaycastHit _hit;
     private InteractableObject _interactableObject;
-    private CollectableObject _collectableObject;
 
     public event UnityAction<string> ObjectRaycastReached;
     public event UnityAction ObjectRaycastAbandoned;
-    public event UnityAction<CollectableObject> ItemPickedUp;
 
     private new void OnEnable()
     {
@@ -55,31 +49,7 @@ public class InteractableObjectsHandler : MonoBehaviourPunCallbacks
     {
         if (_interactableObject)
         {
-            if (_collectableObject != null)
-            {
-                _handObj = _hit.collider.gameObject;
-
-                if (_handObj.TryGetComponent(out Flashlight flashlight))
-                {
-                    ItemPickedUp?.Invoke(flashlight);
-                }
-                else if (_handObj.TryGetComponent(out DetectorCollectable detectorCollectable))
-                {
-                    ItemPickedUp?.Invoke(detectorCollectable);
-                }
-                else if (_handObj.TryGetComponent(out KeyCard keyCard))
-                {
-                    ItemPickedUp?.Invoke(keyCard);
-                }
-                else if (_handObj.TryGetComponent(out Grenade grenade))
-                {
-                    ItemPickedUp?.Invoke(grenade);
-                }
-            }
-            else
-            {
-                _interactableObject.Execute();
-            }
+            _interactableObject.Execute();
         }
     }
 
@@ -90,7 +60,6 @@ public class InteractableObjectsHandler : MonoBehaviourPunCallbacks
             if (_interactableObject == null)
             {
                 _interactableObject = targetObject.transform.GetComponent<InteractableObject>();
-                _collectableObject = _interactableObject.transform.GetComponent<CollectableObject>();
                 ObjectRaycastReached?.Invoke(_interactableObject.Description);
             }
         }
@@ -103,8 +72,5 @@ public class InteractableObjectsHandler : MonoBehaviourPunCallbacks
             _interactableObject = null;
             ObjectRaycastAbandoned?.Invoke();
         }
-
-        if (_collectableObject)
-            _collectableObject = null;
     }
 }

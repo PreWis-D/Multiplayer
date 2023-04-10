@@ -1,15 +1,11 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
-using UnityEngine.Animations;
 using UnityEngine.Animations.Rigging;
 
 public class PlayerAnimator : MonoBehaviourPunCallbacks
 {
     [SerializeField] private PlayerController _personController;
     [SerializeField] private PlayerInput _playerInput;
-    [SerializeField] private Inventory _inventory;
     [SerializeField] private MultiAimConstraint _aimConstraint;
 
     private PhotonView _photonView;
@@ -42,13 +38,6 @@ public class PlayerAnimator : MonoBehaviourPunCallbacks
         base.OnEnable();
         _playerInput.CrouchKeyClicked += OnCrouchKeyClicked;
         _personController.Jumped += OnJumpKeyClicked;
-        _inventory.FlashlightTaken += OnFlashlightTaken;
-        _inventory.DetectorTaken += OnDetectorTaken;
-        _inventory.KeyCardTaken += OnKeyCardTaken;
-        _inventory.GrenadeTaken += OnGrenadeTaken;
-        _inventory.GrenadePreparation += OnGrenadePreparation;
-        _inventory.CancelGrenadeThrow += OnGrenadePreparation;
-        _inventory.GrenadeThrow += OnGrenadeThrow;
     }
 
     private new void OnDisable()
@@ -56,13 +45,6 @@ public class PlayerAnimator : MonoBehaviourPunCallbacks
         base.OnDisable();
         _playerInput.CrouchKeyClicked -= OnCrouchKeyClicked;
         _personController.Jumped -= OnJumpKeyClicked;
-        _inventory.FlashlightTaken -= OnFlashlightTaken;
-        _inventory.DetectorTaken -= OnDetectorTaken;
-        _inventory.KeyCardTaken -= OnKeyCardTaken;
-        _inventory.GrenadeTaken -= OnGrenadeTaken;
-        _inventory.GrenadePreparation -= OnGrenadePreparation;
-        _inventory.CancelGrenadeThrow -= OnGrenadePreparation;
-        _inventory.GrenadeThrow -= OnGrenadeThrow;
     }
 
     private void Start()
@@ -104,37 +86,6 @@ public class PlayerAnimator : MonoBehaviourPunCallbacks
             else
                 photonView.RPC(nameof(SetAnimTrigger), RpcTarget.All, _photonView.ViewID, IdleJumpAnim);
         }
-    }
-
-    private void OnFlashlightTaken(bool value)
-    {
-        photonView.RPC(nameof(SetAnimBool), RpcTarget.All, _photonView.ViewID, FlashlightAnim, value);
-    }
-
-    private void OnDetectorTaken(bool value)
-    {
-        photonView.RPC(nameof(SetAnimBool), RpcTarget.All, _photonView.ViewID, DetectorAnim, value);
-    }
-
-    private void OnKeyCardTaken(bool value)
-    {
-        photonView.RPC(nameof(SetAnimBool), RpcTarget.All, _photonView.ViewID, KeyCardAnim, value);
-    }
-
-    private void OnGrenadeTaken(bool value)
-    {
-        photonView.RPC(nameof(SetAnimBool), RpcTarget.All, _photonView.ViewID, GrenadeIdleAnim, value);
-    }
-
-    private void OnGrenadePreparation(bool value)
-    {
-        photonView.RPC(nameof(SetAnimBool), RpcTarget.All, _photonView.ViewID, PreparationForTrowGrenadeAnim, value);
-    }
-
-    private void OnGrenadeThrow()
-    {
-        photonView.RPC(nameof(SetAnimTrigger), RpcTarget.All, _photonView.ViewID, GrenadeThrowAnim);
-        OnGrenadePreparation(false);
     }
 
     [PunRPC]
